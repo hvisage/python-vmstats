@@ -15,10 +15,15 @@ from datetime import timedelta, datetime
 
 import atexit
 import getpass
-import cgi
+#import cgi
 import viconfig
+import ssl
 
-form = cgi.FieldStorage()
+
+#form = cgi.FieldStorage()
+form={}
+form['vminterval']=5
+
 print("Content-Type: text/html;charset=utf-8\n\n")
 
 
@@ -254,22 +259,27 @@ def GetProperties(content, viewType, props, specType):
 def main():
     args = viconfig.GetArgs()
     try:
-        vmnames = form['vmname'].value
+        #vmnames = form['vmname'].value
+        vmnames= ['LMC','Reach']
         si = None
+        print(args)
+        if hasattr(ssl, "_create_unverified_context"):
+            context = ssl._create_unverified_context()
+        ssl._create_default_https_context = ssl._create_unverified_context
         if args['password']:
             password = args['password']
         else:
             password = getpass.getpass(prompt="Enter password for host {} and user {}: ".format(args['host'], args['user']))
-        try:
-            si = SmartConnect(host=args['host'],
+#        try:
+        si = SmartConnect(host=args['host'],
                               user=args['user'],
                               pwd=password,
                               port=int(args['port']))
-        except IOError as e:
-            pass
-        if not si:
-            print('Could not connect to the specified host using specified username and password')
-            return -1
+#        except IOError as e:
+#            pass
+#        if not si:
+#            print('Could not connect to the specified host using specified username and password')
+#            return -1
 
         atexit.register(Disconnect, si)
         content = si.RetrieveContent()
@@ -287,8 +297,10 @@ def main():
 
         #Find VM supplied as arg and use Managed Object Reference (moref) for the PrintVmInfo
         for vm in retProps:
+            #object_dump (vm)
+            print (vm['name']+" => "+vm['runtime.powerState'])
             if (vm['name'] in vmnames) and (vm['runtime.powerState'] == "poweredOn"):
-                PrintVmInfo(vm['moref'], content, vchtime, int(form['vminterval'].value), perf_dict)
+                PrintVmInfo(vm['moref'], content, vchtime, int(form['vminterval']), perf_dict)
             elif vm['name'] in vmnames:
                 print('ERROR: Problem connecting to Virtual Machine.  {} is likely powered off or suspended'.format(vm['name']))
 
