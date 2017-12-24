@@ -26,7 +26,10 @@ The script requires the following parameters:
 The -p/--password is now optional and if not provided on the command line will prompt instead.
 
 
-<b>The web version:</b>
+
+DO note that the following seems to be unavailable:
+
+<s><b>The web version:</b>
 
 http://www.geeklee.co.uk/web-python-pyvmomi-vm-statistics-hypervisor/
 
@@ -34,3 +37,4 @@ http://www.geeklee.co.uk/web-python-pyvmomi-vm-statistics-hypervisor/
 
 
 http://www.geeklee.co.uk/object-properties-containerview-pyvmomi/
+</s>
